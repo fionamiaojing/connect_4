@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser =  require('body-parser');
-const https = require('https');
+const http = require('http');
 
 //creating server
 const app = express();
@@ -20,5 +20,8 @@ app.get('/', (req, res) => {
     res.end();
 })
 
-const server = https.createServer(app);
+app.get('/favicon.ico', (req, res) => res.status(204));
+
+
+const server = http.createServer(app);
 server.listen(3000);
