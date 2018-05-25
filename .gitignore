@@ -1,1 +1,10 @@
 public/app.js
+
+## DS.store
+.DS_store
+
+##webpack
+dist/
+
+##npm modules
+node_modules/
