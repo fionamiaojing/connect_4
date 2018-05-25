@@ -4,42 +4,59 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            board: Array(7).fill().map((_, index) => Array(6).fill(0)),
-            player1: Array(7).fill(0),
-            player2: Array(7).fill(0),
-            turn: 1,
-        }
-        this.nextTurn ={
-            1: 2,
-            2: 1
-        }
+            len: Array(7).fill(0),
+            p1: Array(7).fill(0),
+            p2: Array(7).fill(0),
+            turn: 'p1',
+        };
+        
+        this.fullBoard = 2 ** 6 -1;
+
+        this.turnProps ={
+            p1: ['p2', 'O'],
+            p2: ['p1', 'X']
+        };
+
     }
 
-    
+    placeOnePiece(col) {
+        if (this.state.len[col] < 6) {
+            //create new state
+            let newState = {}
+            Object.keys(this.state).forEach((key) => {
+                newState[key] = Array.isArray(this.state[key]) ? [...this.state[key]] : this.state[key];
+            })
 
-    handleClick(ind1, ind2, event){
-        const index = this.state.board[ind1].indexOf(0);
-        if (index < 0) {
-            return;
+            //toggle piece:
+            newState[newState.turn][col] ^= (1 << newState.len[col]);
+            newState.len[col]++;
+            newState.turn = this.turnProps[newState.turn][0];
+            this.setState(newState)
         }
-        let newBoard = this.state.board.map((row) => [...row]);
-        newBoard[ind1][index] = this.state.turn;
-        this.setState({
-            board: newBoard,
-            turn: this.nextTurn[this.state.turn]
-        });
+        
+    }
+
+    handleClick(ind1){
+        this.placeOnePiece(ind1);
+
     }
 
     render(){
         return (
-            <div className="board">
-                {this.state.board.map((col, colIndex) => (
+            <div className="board center" onClick={(event) => {this.handleClick(event.target.getAttribute('col'))}}>
+                {this.state.len.map((col, colIndex) => (
                     <div className="column" key={colIndex} >
-                        {col.map((item, rowIndex) => (
-                            <div className="cell" key={rowIndex} col={colIndex} row={rowIndex} onClick={this.handleClick.bind(this, colIndex, rowIndex)}>{item}</div>
-                        ))}
+                    {Array(6).fill().map((_, rowIndex) => (
+                        <div className="cell center" key={rowIndex} col={colIndex}>{
+                            ((this.state.p1[colIndex] & (1 << rowIndex)) && (this.turnProps.p1[1])) ||
+                            ((this.state.p2[colIndex] & (1 << rowIndex)) && (this.turnProps.p2[1])) ||
+                            ('')
+                        }</div>
+                    ))}
                     </div>
-                ))}
+                ))
+                    
+                }
             </div>
         )
     }
