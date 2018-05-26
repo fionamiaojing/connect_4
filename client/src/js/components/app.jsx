@@ -10,7 +10,7 @@ class App extends React.Component {
         };
 
         this.state = {
-            len: Array(7).fill(0),
+            fullBoard: 2 ** 7 - 1,
             p1: Array(7).fill(0),
             p2: Array(7).fill(0),
             turn: 'p1',
@@ -20,55 +20,63 @@ class App extends React.Component {
         
     }
 
-    fullCheckWin(player) {
-        //concurrent column check
-        const check = 2 ** 4 - 1;
-        for (let i = 0; i < player.length; i++) {
-            for (let j = 0; j < 3; j++) {
-                if (((player[i] >> j) & check) === check) {
-                    return true;
-                }
-            }
-        }
+    //Not using this check since we know who's turn it is and its position
+    // fullCheckWin(player) {
+    //     //concurrent column check
+    //     const check = 2 ** 4 - 1;
+    //     for (let i = 0; i < player.length; i++) {
+    //         for (let j = 0; j < 3; j++) {
+    //             if (((player[i] >> j) & check) === check) {
+    //                 return true;
+    //             }
+    //         }
+    //     }
         
-        //inter-column check
-        let leftDiag, row, rightDiag;
-        for (let i = 0; i < 4; i++) {
-            row = player[i];
-            leftDiag = player[i];
-            rightDiag = player[i];
-            for (let j = 1; j < 4; j++) {
-                leftDiag = (leftDiag << 1) & player[i + j];
-                rightDiag = (rightDiag >> 1) & player[i + j];
-                row = row & player[i + j];
-            }
-            if (leftDiag || rightDiag || row) {
-                return true;
-            }
-        }
+    //     //inter-column check
+    //     let leftDiag, row, rightDiag;
+    //     for (let i = 0; i < 4; i++) {
+    //         row = player[i];
+    //         leftDiag = player[i];
+    //         rightDiag = player[i];
+    //         for (let j = 1; j < 4; j++) {
+    //             leftDiag = (leftDiag << 1) & player[i + j];
+    //             rightDiag = (rightDiag >> 1) & player[i + j];
+    //             row = row & player[i + j];
+    //         }
+    //         if (leftDiag | rightDiag | row) {
+    //             return true;
+    //         }
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
-    incrementalCheckWin(player, len, col) {
+    incrementalCheckWin(player, piece, col) {
         //concurrent column check;
         const check = 2 ** 4 - 1;
-        if (((player[col] >> (len[col] - 3)) & check) === check) {
+        let currentCheck = check;
+        while (!(currentCheck & piece)) {
+            currentCheck <<= 1;
+        }
+        if (!((player[col] & currentCheck) ^ currentCheck)) {
             return true;
         }
         
         let leftDiag, rightDiag, row; 
         for (let i = Math.max(0, col - 3); i <= (Math.min(6, col + 3) - 3); i++) {
-            row = (1 << (len[col]));
-            leftDiag = (row >> (col - i)) & player[i];
-            rightDiag = (row << (col - i)) & player[i];
-            row &= player[i];
-            for (let j = 1; j < 4; j++) {
+            currentCheck = check >> 1;
+            leftDiag = (piece >> (col - i)) & player[i];
+            rightDiag = (piece << (col - i)) & player[i];
+            row = piece & player[i];
+            let j = 1;
+            while (currentCheck) {
+                currentCheck >>= 1;
                 leftDiag = (leftDiag << 1) & player[i + j];
                 rightDiag = (rightDiag >> 1) & player[i + j];
                 row &= player[i + j];
+                j++;
             }
-            if (leftDiag || rightDiag || row) {
+            if (leftDiag | rightDiag | row) {
                 return true;
             }
         }
@@ -77,24 +85,31 @@ class App extends React.Component {
     }
 
     placeOnePiece(col) {
-        if (this.state.len[col] < 6) {
+        //determine if the column is all occupied
+        if (this.state.fullBoard & (1 << col)) {
             //create new state
             let newState = {}
             Object.keys(this.state).forEach((key) => {
                 newState[key] = Array.isArray(this.state[key]) ? [...this.state[key]] : this.state[key];
             });
 
+            //determine current piece
+            let piece = (newState.p1[col] | newState.p2[col]) + 1;
+
             //toggle piece:
-            newState[newState.turn][col] ^= (1 << newState.len[col]);
+            newState[newState.turn][col] ^= piece;
+            //determine if the column is all occupied
+            ((1 << 5) & piece) && (newState.fullBoard ^= (1 << col));
 
             //determine win:
-            if (this.incrementalCheckWin(newState[newState.turn], newState.len, col)) {
+            if (this.incrementalCheckWin(newState[newState.turn], piece, col)) {
                 newState.banner = `Winner is player ${this.turnProps[newState.turn][1]}`
                 newState.game = false;
-            } else {
-                //adding length
-                newState.len[col]++;
-
+            } else if (!newState.fullBoard) {
+                //if draw
+                newState.banner = `Draw!`
+                newState.game = false;
+            }else {
                 //switch turns:
                 newState.turn = this.turnProps[newState.turn][0];
                 newState.banner = `Player ${this.turnProps[newState.turn][1]}'s turn`
@@ -109,7 +124,7 @@ class App extends React.Component {
     resetBoard() {
         //create new state
         let newState = {
-            len: Array(7).fill(0),
+            fullBoard: 2 ** 7 -1,
             p1: Array(7).fill(0),
             p2: Array(7).fill(0),
             turn: this.state.turn,
@@ -138,7 +153,7 @@ class App extends React.Component {
                     <h2 className="banner">{this.state.banner}</h2>
                 </div>
                 <div className="board center" onClick={(event) => {this.handleClick(event.target.getAttribute('col'))}}>
-                    {this.state.len.map((col, colIndex) => (
+                    {this.state.p1.map((col, colIndex) => (
                         <div className="column" key={colIndex} >
                         {Array(6).fill().map((_, rowIndex) => (
                             <div className="cell center" key={rowIndex} col={colIndex}>{
