@@ -25,3 +25,15 @@
     line-height: 50px;
     border: 1px solid black;
 }
+
+@keyframes rotation {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(-180deg);}
+}
+
+.rotation {
+    animation: rotation;
+    animation-duration: 1s;
+    animation-delay: 10ms;
+    animation-timing-function: ease-in-out;
+}

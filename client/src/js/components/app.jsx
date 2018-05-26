@@ -152,7 +152,7 @@ class App extends React.Component {
                 <div className="center">
                     <h2 className="banner">{this.state.banner}</h2>
                 </div>
-                <div className="board center" onClick={(event) => {this.handleClick(event.target.getAttribute('col'))}}>
+                <div className={`board center ${this.state.game ? "" : "rotation"}`} onClick={(event) => {this.handleClick(event.target.getAttribute('col'))}}>
                     {this.state.p1.map((col, colIndex) => (
                         <div className="column" key={colIndex} >
                         {Array(6).fill().map((_, rowIndex) => (
