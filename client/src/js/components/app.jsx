@@ -1,5 +1,16 @@
 import React from "react"
 
+const rowNum = 6;
+const colNum = 7;
+const winCond = 4;
+const check = 2 ** winCond - 1;
+const fullBoard = 2 ** colNum - 1;
+
+let boardSetup = [];
+for (let i = 0; i < colNum; i++) {
+    boardSetup[1 << i] = 0;
+}
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -10,87 +21,56 @@ class App extends React.Component {
         };
 
         this.state = {
-            fullBoard: 2 ** 7 - 1,
-            p1: Array(7).fill(0),
-            p2: Array(7).fill(0),
+            fullBoard: fullBoard,
+            p1: boardSetup.slice(),
+            p2: boardSetup.slice(),
             turn: 'p1',
             banner: `Game starts with player ${this.turnProps.p1[1]}`,
             game: true,
         };
-        
     }
 
-    //Not using this check since we know who's turn it is and its position
-    // fullCheckWin(player) {
-    //     //concurrent column check
-    //     const check = 2 ** 4 - 1;
-    //     for (let i = 0; i < player.length; i++) {
-    //         for (let j = 0; j < 3; j++) {
-    //             if (((player[i] >> j) & check) === check) {
-    //                 return true;
-    //             }
-    //         }
-    //     }
-        
-    //     //inter-column check
-    //     let leftDiag, row, rightDiag;
-    //     for (let i = 0; i < 4; i++) {
-    //         row = player[i];
-    //         leftDiag = player[i];
-    //         rightDiag = player[i];
-    //         for (let j = 1; j < 4; j++) {
-    //             leftDiag = (leftDiag << 1) & player[i + j];
-    //             rightDiag = (rightDiag >> 1) & player[i + j];
-    //             row = row & player[i + j];
-    //         }
-    //         if (leftDiag | rightDiag | row) {
-    //             return true;
-    //         }
-    //     }
-
-    //     return false;
-    // }
+    componentDidMount(){
+    }
 
     incrementalCheckWin(player, piece, col) {
         //concurrent column check;
-        const check = 2 ** 4 - 1;
-        let currentCheck = check;
-        while (!(currentCheck & piece)) {
-            currentCheck <<= 1;
-        }
-        if (!((player[col] & currentCheck) ^ currentCheck)) {
+        let curCheck = check;
+        while (!(curCheck & piece)) curCheck <<= 1;
+        if (!((player[col] & curCheck) ^ curCheck)) {
             return true;
         }
         
-        let leftDiag, rightDiag, row; 
-        for (let i = Math.max(0, col - 3); i <= (Math.min(6, col + 3) - 3); i++) {
-            currentCheck = check >> 1;
-            leftDiag = (piece >> (col - i)) & player[i];
-            rightDiag = (piece << (col - i)) & player[i];
-            row = piece & player[i];
-            let j = 1;
-            while (currentCheck) {
-                currentCheck >>= 1;
-                leftDiag = (leftDiag << 1) & player[i + j];
-                rightDiag = (rightDiag >> 1) & player[i + j];
-                row &= player[i + j];
-                j++;
+        let curCol, leftDiag, rightDiag, row; 
+        curCheck = check;
+        while (!((curCheck & fullBoard) ^ curCheck)) {
+            if (curCheck & col) {
+                curCol = (curCheck) & (-curCheck);
+                leftDiag = rightDiag = row = player[curCol];
+                curCol <<= 1;
+                while (curCol & curCheck) {
+                    leftDiag = (leftDiag << 1) & player[curCol];
+                    rightDiag = (rightDiag >> 1) & player[curCol];
+                    row &= player[curCol];
+                    curCol <<= 1;
+                }
+                if (leftDiag | rightDiag | row) {
+                    return true;
+                }
             }
-            if (leftDiag | rightDiag | row) {
-                return true;
-            }
+            curCheck <<= 1;
         }
 
         return false;
     }
 
     placeOnePiece(col) {
-        //determine if the column is all occupied
-        if (this.state.fullBoard & (1 << col)) {
+        //determine if the column is all occupied before placing
+        if (this.state.fullBoard & col) {
             //create new state
             let newState = {}
             Object.keys(this.state).forEach((key) => {
-                newState[key] = Array.isArray(this.state[key]) ? [...this.state[key]] : this.state[key];
+                newState[key] = Array.isArray(this.state[key]) ? this.state[key].slice() : this.state[key];
             });
 
             //determine current piece
@@ -98,8 +78,8 @@ class App extends React.Component {
 
             //toggle piece:
             newState[newState.turn][col] ^= piece;
-            //determine if the column is all occupied
-            ((1 << 5) & piece) && (newState.fullBoard ^= (1 << col));
+            //determine if the column is all occupied after placing
+            ((1 << (rowNum - 1)) & piece) && (newState.fullBoard ^= col);
 
             //determine win:
             if (this.incrementalCheckWin(newState[newState.turn], piece, col)) {
@@ -124,10 +104,9 @@ class App extends React.Component {
     resetBoard() {
         //create new state
         let newState = {
-            fullBoard: 2 ** 7 -1,
-            p1: Array(7).fill(0),
-            p2: Array(7).fill(0),
-            turn: this.state.turn,
+            fullBoard: fullBoard,
+            p1: boardSetup.slice(),
+            p2: boardSetup.slice(),
             banner: `Game starts with player ${this.turnProps[this.state.turn][1]}`,
             game: true,
         }
@@ -143,7 +122,6 @@ class App extends React.Component {
         } else {
             this.resetBoard();
         }
-        
     }
 
     render(){
@@ -152,10 +130,10 @@ class App extends React.Component {
                 <div className="center">
                     <h2 className="banner">{this.state.banner}</h2>
                 </div>
-                <div className={`board center ${this.state.game ? "" : "rotation"}`} onClick={(event) => {this.handleClick(event.target.getAttribute('col'))}}>
-                    {this.state.p1.map((col, colIndex) => (
+                <div className={`board center ${this.state.game ? "rotation" : ""}`} onClick={(event) => {this.handleClick(event.target.getAttribute('col'))}}>
+                    {boardSetup.map((col, colIndex) => (
                         <div className="column" key={colIndex} >
-                        {Array(6).fill().map((_, rowIndex) => (
+                        {Array(rowNum).fill().map((_, rowIndex) => (
                             <div className="cell center" key={rowIndex} col={colIndex}>{
                                 ((this.state.p1[colIndex] & (1 << rowIndex)) && (this.turnProps.p1[1])) ||
                                 ((this.state.p2[colIndex] & (1 << rowIndex)) && (this.turnProps.p2[1])) ||
@@ -165,6 +143,9 @@ class App extends React.Component {
                         </div>
                     ))
                     }
+                </div>
+                <div>
+
                 </div>
             </div>
         )
