@@ -1,14 +1,15 @@
 import React from "react"
 
-const rowNum = 6;
-const colNum = 7;
-const winCond = 4;
-const check = 2 ** winCond - 1;
-const fullBoard = 2 ** colNum - 1;
+let gameSetup = {};
+gameSetup.rowNum = 6;
+gameSetup.colNum = 7;
+gameSetup.winRule = 4;
+gameSetup.check = 2 ** gameSetup.winRule - 1;
+gameSetup.fullBoard = 2 ** gameSetup.colNum - 1;
 
-let boardSetup = [];
-for (let i = 0; i < colNum; i++) {
-    boardSetup[1 << i] = 0;
+gameSetup.boardSetup = [];
+for (let i = 0; i < gameSetup.colNum; i++) {
+    gameSetup.boardSetup[1 << i] = 0;
 }
 
 class App extends React.Component {
@@ -21,9 +22,9 @@ class App extends React.Component {
         };
 
         this.state = {
-            fullBoard: fullBoard,
-            p1: boardSetup.slice(),
-            p2: boardSetup.slice(),
+            fullBoard: gameSetup.fullBoard,
+            p1: gameSetup.boardSetup.slice(),
+            p2: gameSetup.boardSetup.slice(),
             turn: 'p1',
             banner: `Game starts with player ${this.turnProps.p1[1]}`,
             game: true,
@@ -35,15 +36,15 @@ class App extends React.Component {
 
     incrementalCheckWin(player, piece, col) {
         //concurrent column check;
-        let curCheck = check;
+        let curCheck = gameSetup.check;
         while (!(curCheck & piece)) curCheck <<= 1;
         if (!((player[col] & curCheck) ^ curCheck)) {
             return true;
         }
         
         let curCol, leftDiag, rightDiag, row; 
-        curCheck = check;
-        while (!((curCheck & fullBoard) ^ curCheck)) {
+        curCheck = gameSetup.check;
+        while (!((curCheck & gameSetup.fullBoard) ^ curCheck)) {
             if (curCheck & col) {
                 curCol = (curCheck) & (-curCheck);
                 leftDiag = rightDiag = row = player[curCol];
@@ -79,7 +80,7 @@ class App extends React.Component {
             //toggle piece:
             newState[newState.turn][col] ^= piece;
             //determine if the column is all occupied after placing
-            ((1 << (rowNum - 1)) & piece) && (newState.fullBoard ^= col);
+            ((1 << (gameSetup.rowNum - 1)) & piece) && (newState.fullBoard ^= col);
 
             //determine win:
             if (this.incrementalCheckWin(newState[newState.turn], piece, col)) {
@@ -104,9 +105,9 @@ class App extends React.Component {
     resetBoard() {
         //create new state
         let newState = {
-            fullBoard: fullBoard,
-            p1: boardSetup.slice(),
-            p2: boardSetup.slice(),
+            fullBoard: gameSetup.fullBoard,
+            p1: gameSetup.boardSetup.slice(),
+            p2: gameSetup.boardSetup.slice(),
             banner: `Game starts with player ${this.turnProps[this.state.turn][1]}`,
             game: true,
         }
@@ -131,9 +132,9 @@ class App extends React.Component {
                     <h2 className="banner">{this.state.banner}</h2>
                 </div>
                 <div className={`board center ${this.state.game ? "rotation" : ""}`} onClick={(event) => {this.handleClick(event.target.getAttribute('col'))}}>
-                    {boardSetup.map((col, colIndex) => (
+                    {gameSetup.boardSetup.map((col, colIndex) => (
                         <div className="column" key={colIndex} >
-                        {Array(rowNum).fill().map((_, rowIndex) => (
+                        {Array(gameSetup.rowNum).fill().map((_, rowIndex) => (
                             <div className="cell center" key={rowIndex} col={colIndex}>{
                                 ((this.state.p1[colIndex] & (1 << rowIndex)) && (this.turnProps.p1[1])) ||
                                 ((this.state.p2[colIndex] & (1 << rowIndex)) && (this.turnProps.p2[1])) ||
@@ -145,7 +146,7 @@ class App extends React.Component {
                     }
                 </div>
                 <div>
-
+                    
                 </div>
             </div>
         )

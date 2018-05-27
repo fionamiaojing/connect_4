@@ -7,9 +7,11 @@
 }
 
 .board {
+    max-width: 350px;
+    max-height: 300px;
     margin-top: 50px;
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
 }
 
 .column {
@@ -19,11 +21,12 @@
 
 .cell {
     width: 50px;
-    height: 50px;
+    height: 50px;;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 40px;
     line-height: 50px;
     border: 1px solid black;
+    position: relative;
 }
 
 @keyframes rotation {
@@ -36,4 +39,17 @@
     animation-duration: 1s;
     animation-delay: 10ms;
     animation-timing-function: ease-in-out;
+}
+
+@media only screen and (max-width: 400px) {
+    .cell {
+        width: 20px;
+        height: 20px;
+        font-size: 15px;
+        line-height: 20px;
+    }
+
+    .banner {
+        font-size: 20px;
+    }
 }
