@@ -83,12 +83,12 @@ class Board extends React.Component {
             if (this.incrementalCheckWin(newState[newState.turn], piece, col)) {
                 newState.banner = `Winner is player ${this.turnProps[newState.turn][1]}`
                 newState.game = false;
-                this.props.sendGameRecord([[this.turnProps[newState.turn][1], true], [this.turnProps[this.turnProps[newState.turn][0]][1], false]])
+                this.props.sendGameRecord([[this.turnProps.p1[1], this.turnProps.p2[1]], this.turnProps[newState.turn][1]])
             } else if (!newState.fullBoard) {
                 //if draw
                 newState.banner = `Draw!`
                 newState.game = false;
-                this.props.sendGameRecord([[this.turnProps.p1[1], false], [this.turnProps.p2[1], false]]);
+                this.props.sendGameRecord([[this.turnProps.p1[1], this.turnProps.p2[1]], '']);
             }else {
                 //switch turns:
                 newState.turn = this.turnProps[newState.turn][0];

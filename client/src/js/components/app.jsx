@@ -7,8 +7,10 @@ class App extends React.Component {
         super(props);
 
         this.state = {
-            history: [],
-        }
+            history: [
+                [['O', 'X'], null],
+                [['O', 'X'], 'O']]
+            }
         this.sendGameRecord = this.sendGameRecord.bind(this);
     }
 

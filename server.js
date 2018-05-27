@@ -14,6 +14,10 @@ app.use((req, res, next) => {
     next();
 })
 
+app.post('/history', (req, res) => {
+    
+})
+
 app.get('/', (req, res) => {
     res.statusCode = 200;
     res.sendfile('./public/index.html');
