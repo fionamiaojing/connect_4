@@ -29,6 +29,14 @@
     position: relative;
 }
 
+.history {
+    margin: 10px 0 0;
+}
+
+.records {
+    margin-top: 0;
+}
+
 @keyframes rotation {
     from {transform: rotate(0deg);}
     to {transform: rotate(-180deg);}
