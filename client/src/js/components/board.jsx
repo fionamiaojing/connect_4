@@ -91,20 +91,22 @@ class Board extends React.Component {
             if (this.incrementalCheckWin(newState[newState.turn], piece, col)) {
                 newState.banner = `Winner is player ${this.turnProps[newState.turn][1]}`
                 newState.game = false;
-                this.props.sendGameRecord([
-                    [this.turnProps[newState.turn][1], this.turnProps[this.turnProps[newState.turn][0]][1]], 
-                    this.turnProps[newState.turn][1],
-                    [newState[newState.turn], newState[this.turnProps[newState.turn][0]]]
-                ])
+                const gameRecord = {
+                    players: [this.turnProps[newState.turn][1], this.turnProps[this.turnProps[newState.turn][0]][1]],
+                    winner: this.turnProps[newState.turn][1],
+                    boards: [newState[newState.turn], newState[this.turnProps[newState.turn][0]]]
+                }
+                this.props.sendGameRecord(gameRecord);
             } else if (!newState.fullBoard) {
                 //if draw
                 newState.banner = `Draw!`
                 newState.game = false;
-                this.props.sendGameRecord([
-                    [this.turnProps.p1[1], this.turnProps.p2[1]], 
-                    '', 
-                    [newState.p1, newState.p2]
-                ]);
+                const gameRecord = {
+                    players: [this.turnProps.p1[1], this.turnProps.p2[1]],
+                    winner: '',
+                    boards: [newState.p1, newState.p2]
+                }
+                this.props.sendGameRecord(gameRecord);
             }else {
                 //switch turns:
                 newState.turn = this.turnProps[newState.turn][0];
@@ -121,11 +123,16 @@ class Board extends React.Component {
         //create new state
         let newState = {
             fullBoard: gameSetup.fullBoard,
-            p1: result ? result[2][0] : gameSetup.boardSetup.slice(),
-            p2: result ? result[2][1] : gameSetup.boardSetup.slice(),
+            p1: result ? result.boards[0] : gameSetup.boardSetup.slice(),
+            p2: result ? result.boards[1] : gameSetup.boardSetup.slice(),
             turn: this.state.turn,
-            banner: result ? (result[1] ? `Winner is player ${result[1]}`  : `Draw!`) :`Game starts with player ${this.turnProps[this.state.turn][1]}`,
+            banner: result ? (result.winner ? `Winner is player ${result.winner}`  : `Draw!`) :`Game starts with player ${this.turnProps[this.state.turn][1]}`,
             game: result ? false : true,
+        }
+
+        if (result) {
+            this.turnProps.p1[1] = result.players[0];
+            this.turnProps.p2[1] = result.players[1];
         }
 
         //set new state
