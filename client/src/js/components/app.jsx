@@ -7,11 +7,10 @@ class App extends React.Component {
         super(props);
 
         this.state = {
-            history: [
-                [['O', 'X'], null],
-                [['O', 'X'], 'O']]
+            history: [],
             }
         this.sendGameRecord = this.sendGameRecord.bind(this);
+        this.handleHistoryClick = this.handleHistoryClick.bind(this);
     }
 
     componentDidMount() {
@@ -19,15 +18,20 @@ class App extends React.Component {
     }
     
     sendGameRecord(result) {
-        console.log(result);
+        this.setState({
+            history: [...this.state.history, result]
+        })
     }
 
+    handleHistoryClick(event) {
+        this.board.resetBoard(this.state.history[event.currentTarget.getAttribute('index')]);
+    }
 
     render(){
         return (
             <div>
-                <Board sendGameRecord={this.sendGameRecord}/>
-                <History history={this.state.history} />
+                <Board sendGameRecord={this.sendGameRecord} onRef={(ref) => (this.board = ref)}/>
+                <History history={this.state.history} handleHistoryClick={this.handleHistoryClick}/>
             </div>
         )
     }
