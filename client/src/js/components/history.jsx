@@ -28,7 +28,7 @@ const History = (props) => {
                 <table className="records center">
                     <tbody>
                     {props.history.map((record, index) => (
-                        <tr key={index} onClick={props.handleHistoryClick} index={index}>
+                        <tr key={index} onClick={props.handleHistoryClick} index={index} className="record">
                             <td>{record.winner ? 'Win' : 'Draw'}</td>
                             <td>{record.players[0]}</td>
                             <td>:</td>
