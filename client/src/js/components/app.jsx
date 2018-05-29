@@ -13,11 +13,18 @@ class App extends React.Component {
 
         this.state = {
             history: [],
+            section: 0
         };
+
+        this.section={
+            0: [1, 'History'],
+            1: [0, 'Bitwise Implementation']
+        }
 
         this.historyUrl = 'http://localhost:3000/history'
         this.sendGameRecord = this.sendGameRecord.bind(this);
         this.retrieveGameRecords = this.retrieveGameRecords.bind(this);
+        this.handleSectionClick = this.handleSectionClick.bind(this);
         this.handleHistoryClick = this.handleHistoryClick.bind(this);
     }
 
@@ -47,6 +54,12 @@ class App extends React.Component {
         })})
     }
 
+    handleSectionClick(event) {
+        this.setState({
+            section: this.section[this.state.section][0]
+        })
+    }
+
     handleHistoryClick(event) {
         this.board.resetBoard(this.state.history[event.currentTarget.getAttribute('index')]);
     }
@@ -55,7 +68,11 @@ class App extends React.Component {
         return (
             <div>
                 <Board sendGameRecord={this.sendGameRecord} onRef={(ref) => (this.board = ref)}/>
-                <History history={this.state.history} handleHistoryClick={this.handleHistoryClick}/>
+                <div className="section center">
+                    <h2 className="center"  onClick={this.handleSectionClick}>{this.section[this.state.section][1]}</h2><br/>
+                </div>
+                {((this.state.section === 0) && (<History history={this.state.history} handleHistoryClick={this.handleHistoryClick}/>))
+                || ((this.state.section === 1) && (''))}
             </div>
         )
     }

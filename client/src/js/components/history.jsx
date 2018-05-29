@@ -24,7 +24,6 @@ const History = (props) => {
     return (
         props.history.length 
             ? (<div>
-                <h2 className="history center">History</h2><br/>
                 <table className="center">
                     <tbody className="records">
                     {props.history.map((record, index) => (

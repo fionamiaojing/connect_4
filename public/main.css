@@ -29,8 +29,10 @@
     position: relative;
 }
 
-.history {
+.section {
     margin: 10px 0 0;
+    padding-left: 25%;
+    padding-right: 25%;
 }
 
 
