@@ -2,6 +2,10 @@ import React from "react"
 import Board from './board.jsx'
 import History from './history.jsx';
 
+const automate = (cb, wt) => {
+    cb();
+    setTimeout(automate.bind(null, cb, wt), wt);
+}
 
 class App extends React.Component {
     constructor(props) {
@@ -13,11 +17,12 @@ class App extends React.Component {
 
         this.historyUrl = 'http://localhost:3000/history'
         this.sendGameRecord = this.sendGameRecord.bind(this);
+        this.retrieveGameRecords = this.retrieveGameRecords.bind(this);
         this.handleHistoryClick = this.handleHistoryClick.bind(this);
     }
 
     componentDidMount() {
-        this.retrieveGameRecords();
+        automate(this.retrieveGameRecords, 10000);
     }
     
     sendGameRecord(result) {
