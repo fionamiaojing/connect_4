@@ -25,8 +25,8 @@ const History = (props) => {
         props.history.length 
             ? (<div>
                 <h2 className="history center">History</h2><br/>
-                <table className="records center">
-                    <tbody>
+                <table className="center">
+                    <tbody className="records">
                     {props.history.map((record, index) => (
                         <tr key={index} onClick={props.handleHistoryClick} index={index} className="record">
                             <td>{record.winner ? 'Win' : 'Draw'}</td>

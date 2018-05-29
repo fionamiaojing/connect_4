@@ -33,10 +33,19 @@
     margin: 10px 0 0;
 }
 
+
 .records {
-    margin-top: 0;
-    height: 200px;
-    overflow-y: scroll;
+    margin: 0 auto;
+    height: 250px;
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+}
+
+.record {
+    flex: auto;
 }
 
 .time {
