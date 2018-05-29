@@ -1,6 +1,7 @@
 import React from "react"
 import Board from './board.jsx'
 import History from './history.jsx';
+import BitwiseImplementation from './bitwiseImplementation.jsx';
 
 const automate = (cb, wt) => {
     cb();
@@ -72,7 +73,7 @@ class App extends React.Component {
                     <h2 className="center"  onClick={this.handleSectionClick}>{this.section[this.state.section][1]}</h2><br/>
                 </div>
                 {((this.state.section === 0) && (<History history={this.state.history} handleHistoryClick={this.handleHistoryClick}/>))
-                || ((this.state.section === 1) && (''))}
+                || ((this.state.section === 1) && (<BitwiseImplementation />))}
             </div>
         )
     }

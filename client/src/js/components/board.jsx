@@ -1,9 +1,10 @@
 import React from 'react';
 
-let gameSetup = {};
-gameSetup.rowNum = 6;
-gameSetup.colNum = 7;
-gameSetup.winRule = 4;
+let gameSetup = {
+    rowNum : 6,
+    colNum : 7,
+    winRule : 4,
+};
 gameSetup.check = 2 ** gameSetup.winRule - 1;
 gameSetup.fullBoard = 2 ** gameSetup.colNum - 1;
 
@@ -152,7 +153,7 @@ class Board extends React.Component {
         return (
             <div>
                 <div className="center">
-                    <h2 className="banner">{this.state.banner}</h2>
+                    <h2 className="banner" onClick={() => {this.resetBoard()}}>{this.state.banner}</h2>
                 </div>
                 <div className={`board center ${this.state.game ? "rotation" : ""}`} onClick={(event) => {this.handleBoardClick(event.target.getAttribute('col'))}}>
                     {gameSetup.boardSetup.map((col, colIndex) => (

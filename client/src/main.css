@@ -1,3 +1,7 @@
+body {
+    font-size: 20px;
+}
+
 .center {
     text-align: center;
     vertical-align: middle;
@@ -6,10 +10,15 @@
     justify-content: center;
 }
 
+.banner {
+    margin-bottom: 50px;
+}
+
 .board {
     max-width: 350px;
     max-height: 300px;
-    margin-top: 50px;
+    padding-left: 10px;
+    padding-right: 10px;
     display: flex;
     flex-direction: row-reverse;
 }
@@ -27,6 +36,27 @@
     line-height: 50px;
     border: 1px solid black;
     position: relative;
+}
+
+.cell.smaller {
+    width: 25px;
+    height: 25px;
+    font-size: 20px;
+    line-height: 25px;
+}
+
+.cell.vertical {
+    transform: rotate(90deg);
+}
+
+.cell.borderless {
+    border: 0;
+}
+
+.cell.top-border {
+    border-left: 0;
+    border-bottom: 0;
+    border-right: 0;
 }
 
 .section {
@@ -54,6 +84,45 @@
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     color: lightgrey;
+}
+
+.bordered-table {
+    border-collapse: collapse;
+    border: 1px solid lightgrey;
+    float: left;
+    position: fixed;
+    top: 240px;
+}
+
+.bordered-table th {
+    border: 1px solid lightgrey;
+    text-align: left;
+    padding: 5px;
+}
+
+.bordered-table td {
+    border: 1px solid lightgrey;
+    text-align: left;
+    padding: 5px;
+}
+
+.subSections {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    align-content: stretch;
+}
+
+.explanation {
+    width: 40%;
+    max-width: 800px;
+    min-width: 400px;
+}
+
+.left {
+    margin-left: 0;
+    text-align: left;
 }
 
 @keyframes rotation {
