@@ -528,8 +528,22 @@ class Slides7 extends React.Component {
                 <span className="left">If the toggled checker is row 4 and up, shift the check 1111 left <br/>(1111 &lt;&lt; 2) = 111100, <br/>until <br/>(toggled checker position &amp; 111100) = 100000 &amp; 111100 = 100000, a truthy value.<br/></span>
                 <span className="left">Then <br/>(the current column: p1[col] &amp; 111100 ^ 111100) = 111100 &amp; 111100 ^ 111100 = 111100 ^ 111100 = 0, a falsy value meaning winning.</span>
             </div>
-            {this.state.table2 ? <Table2 position="float right" onClick={() => {this.setState({table2: false})}}/> : <div className="float right" onClick={() => {this.setState({table2: true})}}>Stored Variables</div>}
-            {this.state.table1 ? <Table1 position="float left" onClick={() => {this.setState({table1: false})}}/> : <div className="float left" onClick={() => {this.setState({table1: true})}}>Bitwise Operator</div>}
+            {this.state.table2 
+                ? <Table2 position="float right" 
+                onClick={() => {this.setState({table2: false})}}/> 
+                : <div className="float right" 
+                onClick={() => {this.setState({table2: true})}} 
+                onMouseEnter={this.props.handleMouseEnter}
+                onMouseLeave={this.props.handleMouseLeave}
+                >Stored Variables</div>}
+            {this.state.table1 
+                ? <Table1 position="float left" 
+                onClick={() => {this.setState({table1: false})}}/> 
+                : <div className="float left" 
+                onClick={() => {this.setState({table1: true})}}
+                onMouseEnter={this.props.handleMouseEnter}
+                onMouseLeave={this.props.handleMouseLeave}
+                >Bitwise Operator</div>}
         </div>
     )}
 };
@@ -638,8 +652,22 @@ class Slides8 extends React.Component {
                 <span className="left"><br/><br/><b>4. Loop through all related 4-columns:</b></span>
                 <span className="left"><br/><br/>If none of the trackers in step 3 iv) is truthy, loop through step 1 to step 3 by shifting current focused columns left by 1, until one winning condition is found or all possiblilities of related columns are checked.</span>
             </div>
-            {this.state.table2 ? <Table2 position="float right" onClick={() => {this.setState({table2: false})}}/> : <div className="float right" onClick={() => {this.setState({table2: true})}}>Stored Variables</div>}
-            {this.state.table1 ? <Table1 position="float left" onClick={() => {this.setState({table1: false})}}/> : <div className="float left" onClick={() => {this.setState({table1: true})}}>Bitwise Operator</div>}
+            {this.state.table2 
+                ? <Table2 position="float right" 
+                onClick={() => {this.setState({table2: false})}}/> 
+                : <div className="float right" 
+                onClick={() => {this.setState({table2: true})}}
+                onMouseEnter={this.props.handleMouseEnter}
+                onMouseLeave={this.props.handleMouseLeave}
+                >Stored Variables</div>}
+            {this.state.table1 
+                ? <Table1 position="float left" 
+                onClick={() => {this.setState({table1: false})}}/> 
+                : <div className="float left" 
+                onClick={() => {this.setState({table1: true})}}
+                onMouseEnter={this.props.handleMouseEnter}
+                onMouseLeave={this.props.handleMouseLeave}
+                >Bitwise Operator</div>}
         </div>
     )}
 };
@@ -669,11 +697,11 @@ if (fullBoard & col) {
 
     //determine win: 
     if (checkWin(p[turn], piece, col)) {
+        resetBoard();
         return 'p[turn] wins';
-        resetBoard();
     } else if (!fullBoard){
-        return 'Draw!';
         resetBoard();
+        return 'Draw!';
     } else {
         turn = nextTurn(turn);
     }
@@ -750,8 +778,8 @@ class BitwiseImplementation extends React.Component {
             4: [3, 5, <Slides4 />],
             5: [4, 6, <Slides5 />],
             6: [5, 7, <Slides6 />],
-            7: [6, 8, <Slides7 />],
-            8: [7, 9, <Slides8 />],
+            7: [6, 8, <Slides7 handleMouseEnter={this.props.handleMouseEnter} handleMouseLeave={this.props.handleMouseLeave}/>],
+            8: [7, 9, <Slides8 handleMouseEnter={this.props.handleMouseEnter} handleMouseLeave={this.props.handleMouseLeave}/>],
             9: [8, 0, <Slides9 />],
         };
         this.state = {
@@ -764,16 +792,21 @@ class BitwiseImplementation extends React.Component {
         return (
             <div>
                 <nav className="nav">
-                    <div onClick={() => {this.setState({page: this.page[this.state.page][0]})}}>&lt;---</div>
-                    <div>page:<select type="text" value={this.state.page} onChange={(event) => {this.setState({page: event.target.value})}}>
+                    <div onClick={() => {this.setState({page: this.page[this.state.page][0]})}}
+                    onMouseEnter={this.props.handleMouseEnter} 
+                    onMouseLeave={this.props.handleMouseLeave}
+                    >&lt;---</div>
+                    <div><select type="text" value={this.state.page} onChange={(event) => {this.setState({page: event.target.value})}}>
                         {Object.keys(this.page).map((key) => (
-                            <option value={key} key={key}>{key}</option>
+                            <option value={key} key={key}>{'page ' + key}</option>
                         ))}
                     </select></div>
-                    <div onClick={() => {this.setState({page: this.page[this.state.page][1]})}}>---&gt;</div>
+                    <div onClick={() => {this.setState({page: this.page[this.state.page][1]})}}
+                    onMouseEnter={this.props.handleMouseEnter} 
+                    onMouseLeave={this.props.handleMouseLeave}
+                    >---&gt;</div>
                 </nav>
                 {this.page[this.state.page][2]}
-
             </div>
         )
     }

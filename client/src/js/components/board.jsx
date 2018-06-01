@@ -153,9 +153,13 @@ class Board extends React.Component {
         return (
             <div>
                 <div className="center">
-                    <h2 className="banner" onClick={() => {this.resetBoard()}}>{this.state.banner}</h2>
+                    <h2 className="banner center" 
+                    onClick={() => {this.resetBoard()}}
+                    onMouseEnter={this.props.handleMouseEnter} 
+                    onMouseLeave={this.props.handleMouseLeave}
+                    ><span>{this.state.banner}</span></h2>
                 </div>
-                <div className={`board center ${this.state.game ? "rotation" : ""}`} onClick={(event) => {this.handleBoardClick(event.target.getAttribute('col'))}}>
+                <div className={`game board center ${this.state.game ? "rotation" : ""}`} onClick={(event) => {this.handleBoardClick(event.target.getAttribute('col'))}}>
                     {gameSetup.boardSetup.map((col, colIndex) => (
                         <div className="column" key={colIndex} >
                         {Array(gameSetup.rowNum).fill().map((_, rowIndex) => (

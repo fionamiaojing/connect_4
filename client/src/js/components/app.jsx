@@ -14,12 +14,13 @@ class App extends React.Component {
 
         this.state = {
             history: [],
-            section: 0
+            section: 0,
+            title: 'History'
         };
 
         this.section={
-            0: [1, 'History'],
-            1: [0, 'Bitwise Implementation']
+            0: [1, 'History', 'Bitwise Implementation'],
+            1: [0, 'Bitwise Implementation', 'Game']
         }
 
         this.historyUrl = 'http://localhost:3000/history'
@@ -57,7 +58,8 @@ class App extends React.Component {
 
     handleSectionClick(event) {
         this.setState({
-            section: this.section[this.state.section][0]
+            section: this.section[this.state.section][0],
+            title: this.section[this.section[this.state.section][0]][1]
         })
     }
 
@@ -65,15 +67,47 @@ class App extends React.Component {
         this.board.resetBoard(this.state.history[event.currentTarget.getAttribute('index')]);
     }
 
+    handleMouseEnter(event) {
+        event.currentTarget.classList.add('hover');
+    }
+
+    handleMouseLeave(event) {
+        event.currentTarget.classList.remove('hover');
+    }
+
     render(){
         return (
             <div>
-                {(this.state.section === 0) ? (<Board sendGameRecord={this.sendGameRecord} onRef={(ref) => (this.board = ref)}/>) : null}
+                {(this.state.section === 0) 
+                ? (<Board sendGameRecord={this.sendGameRecord} 
+                    onRef={(ref) => (this.board = ref)}
+                    handleMouseEnter={this.handleMouseEnter}
+                    handleMouseLeave={this.handleMouseLeave}/>) 
+                : null}
                 <div className="section center">
-                    <h2 className="center"  onClick={this.handleSectionClick}>{this.section[this.state.section][1]}</h2>
+                    <h2 className="center" 
+                    onClick={this.handleSectionClick} 
+                    onMouseEnter={(event) => {
+                        this.handleMouseEnter(event);
+                        this.setState({
+                            title: this.section[this.state.section][2]
+                        });
+                    }}
+                    onMouseLeave={(event) => {
+                        this.handleMouseLeave(event);
+                        this.setState({
+                            title: this.section[this.state.section][1]
+                        });
+                    }}>
+                        <span>{this.state.title}</span>
+                    </h2>
                 </div>
-                {((this.state.section === 0) && (<History history={this.state.history} handleHistoryClick={this.handleHistoryClick}/>))
-                || ((this.state.section === 1) && (<BitwiseImplementation />))}
+                {((this.state.section === 0) && (<History history={this.state.history} 
+                handleHistoryClick={this.handleHistoryClick} 
+                handleMouseEnter={this.handleMouseEnter}
+                handleMouseLeave={this.handleMouseLeave}/>))
+                || ((this.state.section === 1) && (<BitwiseImplementation handleMouseEnter={this.handleMouseEnter}
+                    handleMouseLeave={this.handleMouseLeave}/>))}
             </div>
         )
     }
