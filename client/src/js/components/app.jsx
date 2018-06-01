@@ -3,10 +3,7 @@ import Board from './board.jsx'
 import History from './history.jsx';
 import BitwiseImplementation from './bitwiseImplementation.jsx';
 
-const automate = (cb, wt) => {
-    cb();
-    setTimeout(automate.bind(null, cb, wt), wt);
-}
+
 
 class App extends React.Component {
     constructor(props) {
@@ -23,7 +20,6 @@ class App extends React.Component {
             1: [0, 'Bitwise Implementation', 'Game']
         }
 
-        this.historyUrl = 'http://localhost:3000/history'
         this.sendGameRecord = this.sendGameRecord.bind(this);
         this.retrieveGameRecords = this.retrieveGameRecords.bind(this);
         this.handleSectionClick = this.handleSectionClick.bind(this);
@@ -31,29 +27,16 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        automate(this.retrieveGameRecords, 10000);
+
     }
     
     sendGameRecord(result) {
-        return fetch(this.historyUrl, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify(result)
-        }).then(this.retrieveGameRecords.bind(this))
+        this.setState({
+            history: [...this.state.history, result]
+        })
     }
 
     retrieveGameRecords() {
-        return fetch(this.historyUrl, {
-            method: 'GET',
-            mode: 'cors',
-        }).then(response => response.json())
-        .then((history) => {
-            this.setState({
-            history: history
-        })})
     }
 
     handleSectionClick(event) {
