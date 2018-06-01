@@ -68,9 +68,9 @@ class App extends React.Component {
     render(){
         return (
             <div>
-                <Board sendGameRecord={this.sendGameRecord} onRef={(ref) => (this.board = ref)}/>
+                {(this.state.section === 0) ? (<Board sendGameRecord={this.sendGameRecord} onRef={(ref) => (this.board = ref)}/>) : null}
                 <div className="section center">
-                    <h2 className="center"  onClick={this.handleSectionClick}>{this.section[this.state.section][1]}</h2><br/>
+                    <h2 className="center"  onClick={this.handleSectionClick}>{this.section[this.state.section][1]}</h2>
                 </div>
                 {((this.state.section === 0) && (<History history={this.state.history} handleHistoryClick={this.handleHistoryClick}/>))
                 || ((this.state.section === 1) && (<BitwiseImplementation />))}
